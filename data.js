@@ -1,27 +1,27 @@
 const Nebulas = require("nebulas");
 const fs = require("fs");
 var _ = require("lodash");
+const moment = require("moment");
 
 const {
   initNeb,
   convert2nas,
   convert2nax,
-  sendNas,
   getAccState,
   getNebState,
   callNode,
 } = require("./lib/nebulas");
 
-const { clear_log, log, asyncForEach } = require("./lib/utils");
+const { clear_log, log, period2Time } = require("./lib/utils");
 
 const Neb = Nebulas.Neb;
 const neb = new Neb();
 
 initNeb(neb, "mainnet");
 
-const log_file = `data.txt`;
+const log_file = `data.md`;
 
-const dayPeriodDuration = 27 * 7;
+const dayPeriodDuration = 27;
 
 run();
 
@@ -32,6 +32,9 @@ async function run() {
   let latestPeriod = sysInfo.currentPeriod;
   let startPeriod = latestPeriod - dayPeriodDuration;
 
+  let startTime = period2Time(startPeriod);
+  let latestTime = period2Time(latestPeriod + 1);
+
   // create day period list
   const periodList = getPeriodList(startPeriod, latestPeriod);
 
@@ -40,26 +43,38 @@ async function run() {
   let nodeList = [];
 
   // clear log
-  clear_log();
-  log(`\nNebulas Node Mint Statics`);
-  log(`\nStatistic period: ${startPeriod} ~ ${latestPeriod - 1}`);
-  log(`\nPowered by Nax.One`);
-  log(`\n\n---------------------------------\n`);
+  clear_log(log_file);
+  log(`\nNebulas Node Mint Statics`, log_file);
+  log(
+    `\n星云节点平台出块统计\n如需获取每日信息，请加小助手微信 naxone01`,
+    log_file
+  );
+  log(
+    `\nStatistic period: ${startPeriod}(${startTime}) ~ ${
+      latestPeriod - 1
+    }(${latestTime})`,
+    log_file
+  );
+  log(`\nPowered by Nax.One`, log_file);
+  log(`\n\n---------------------------------`, log_file);
+  log(
+    `\n\n| node name | node id | rank | vote nax | mint blocks | mint nas |`,
+    log_file
+  );
+  log(
+    `\n| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |`,
+    log_file
+  );
 
   await Promise.all(
     periodList.map(async (p) => {
       const blockData = await callNode("getBlockData", [p]);
       console.log(`\nperiod: ${p}`);
-      console.log(`=================================`);
+      console.log(`\n\n------------------------------`);
 
       // console.log(blockData);
 
       blockData.forEach((bd) => {
-        //   log(
-        //     `\nname:${bd["node"]["info"]["name"]}  id:${bd["node"]["id"]} mint: ${bd["count"]} blocks`
-        //   );
-        //   log(`\n ---------------------------------`);
-
         const findInNodes = nodeList.find((n) => n.id === bd["node"]["id"]);
 
         if (!findInNodes) {
@@ -90,8 +105,6 @@ async function run() {
           });
         }
       }); // end: blockData.forEach
-
-      // log(`=================================`);
     })
   ); // end: periodList.forEach
 
@@ -99,10 +112,12 @@ async function run() {
   nodeList
     .sort((a, b) => a.rank - b.rank)
     .map((n) => {
-      log(`\nnode name: ${n.name}   node id: ${n.id}`);
-      log(`\nrank: ${n.rank}   nax: ${n.vote} NAX`);
-      log(`\nblocks: ${n.totalMint}   mint: ${n.totalMint * 1.189} NAS`);
-      log(`\n\n---------------------------------\n`);
+      log(
+        `\n| \`${n.name}\` | ${n.id} | ${n.rank} | ${n.vote} NAX | ${
+          n.totalMint
+        } | ${(n.totalMint * 1.189).toFixed(2)} NAS |`,
+        log_file
+      );
     });
 }
 
