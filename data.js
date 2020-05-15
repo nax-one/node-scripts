@@ -33,7 +33,7 @@ async function run() {
   let startPeriod = latestPeriod - dayPeriodDuration;
 
   let startTime = period2Time(startPeriod);
-  let latestTime = period2Time(latestPeriod + 1);
+  let latestTime = period2Time(latestPeriod);
 
   // create day period list
   const periodList = getPeriodList(startPeriod, latestPeriod);

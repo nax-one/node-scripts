@@ -39,7 +39,7 @@ const distributeList = {
     },
   ],
   reserve: {
-    address: "n1MtJExDte3W9JgEZNHG5dzmej4YwLMg8CD",
+    address: "n1Y17jbmmhF8kLvcnyFE4Ds2TqHohVBvToV",
     name: "@lee.c",
   },
 };

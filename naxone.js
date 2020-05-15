@@ -18,8 +18,8 @@ const contract_add = "n1vNBd93kAjBx41J9hBbvd9b9NqveCTPuov";
 const genesisTimestamp = 1522377330; // miannet
 const periodLength = 3150;
 
-const lastPeriod = 21269;
-const nowPeriod = 21296;
+const lastPeriod = 21296;
+const nowPeriod = 21323;
 
 const lastTime = period2Time(lastPeriod);
 const nowTime = period2Time(nowPeriod);
@@ -61,7 +61,7 @@ async function getNodeIncomes(node_name) {
     const { address, vote, value, transfered } = d;
 
     if (transfered) {
-      let log_str = `\n| ${address} | ${vote} NAX | ${value} NAS |`;
+      let log_str = `\n| ${address} | ${parseInt(vote).toLocaleString()} NAX | ${value} NAS |`;
 
       log(log_str, `${node_name}.md`);
     }
