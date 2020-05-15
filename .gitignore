@@ -1,4 +1,4 @@
 /node_modules
 /coinbase/*
 *.txt
-*.md
+data.md
