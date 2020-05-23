@@ -18,12 +18,6 @@ const contract_add = "n1vNBd93kAjBx41J9hBbvd9b9NqveCTPuov";
 const genesisTimestamp = 1522377330; // miannet
 const periodLength = 3150;
 
-const lastPeriod = 21296;
-const nowPeriod = 21323;
-
-const lastTime = period2Time(lastPeriod);
-const nowTime = period2Time(nowPeriod);
-
 clear_log("naxone01.md");
 clear_log("naxone02.md");
 
@@ -31,6 +25,13 @@ getNodeIncomes("naxone01");
 getNodeIncomes("naxone02");
 
 async function getNodeIncomes(node_name) {
+
+
+  const { lastPeriod, nowPeriod } = await getNodePeriods(node_name);
+
+  const lastTime = period2Time(lastPeriod);
+  const nowTime = period2Time(nowPeriod);
+
   const tx = await neb.api.call({
     chainID: 1,
     from: my_addr,
@@ -68,4 +69,33 @@ async function getNodeIncomes(node_name) {
   });
 
   log("\n\n----------------------------------", `${node_name}.md`);
+}
+
+
+async function getNodePeriods(node_id) {
+  const tx = await neb.api.call({
+    chainID: 1,
+    from: my_addr,
+    to: contract_add,
+    value: 0,
+    gasPrice,
+    gasLimit,
+    contract: {
+      function: "getNodePeriods",
+      args: JSON.stringify([node_id]),
+    },
+  });
+
+  //code
+  
+  let result = JSON.parse(tx.result);
+  const res_len = result.length;
+
+  const lastPeriod = result[res_len - 2];
+  const nowPeriod = result[res_len - 1];;
+
+  console.log(node_id, lastPeriod, nowPeriod);
+
+  return {lastPeriod, nowPeriod};
+
 }
