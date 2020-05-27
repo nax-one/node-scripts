@@ -1,4 +1,5 @@
 /node_modules
 /coinbase/*
 *.txt
-data.md
+*.md
+/logs
