@@ -1,22 +1,47 @@
-import { call } from "./lib/nebCall";
+#!/usr/bin/env babel-node --
+
+import { call } from "../lib/nebCall";
 import _ from "lodash";
 import async from "async";
+const { program } = require("commander");
 
 const fs = require("fs");
-const { Log } = require("./lib/log");
-const { convert2nax, convert2NaxBasic } = require("./lib/nebUtil");
-const { datetime } = require("./lib/utils");
-import { contract } from "./config/contract";
+const { Log } = require("../lib/log");
+const {
+  convert2nax,
+  convert2NaxBasic,
+  period2Time,
+} = require("../lib/nebUtil");
+const { datetime } = require("../lib/utils");
+import { contract } from "../config/contract";
 
 async function run() {
-  // 1. get all vote address
-  // getAllVoteAddress();
+  program.option("-a, --action <type>", "node monitor action", "vote");
 
-  // 2. get address withdraw records from file
-  // getAddrWithdrawFromFile();
+  program.parse(process.argv);
 
-  // 3. get all nax address balance
-  getAllBlance();
+  console.log(program.action);
+
+  switch (program.action) {
+    case "vote":
+    case "v":
+      // 1. get all vote address
+      getAllVoteAddress();
+      break;
+    case "withdraw":
+    case "w":
+      // 2. get address withdraw records from file
+      getAddrWithdrawFromFile();
+      break;
+
+    case "balance":
+    case "b":
+      // 3. get all nax address balance
+      getAllBlance();
+      break;
+    default:
+      break;
+  }
 }
 
 run();
@@ -43,10 +68,24 @@ async function getNaxBalance(addr) {
   return parseInt(res);
 }
 
+async function getCurrent() {
+  const sysInfo = await call("getSystemInfo");
+  let latestPeriod = sysInfo.currentPeriod;
+  let latestTime = period2Time(latestPeriod);
+  return {
+    period: latestPeriod,
+    datetime: latestTime,
+  };
+}
+
 // get all nax address balance
 async function getAllBlance() {
-  const log = new Log("./logs/node-monitor/balance.md");
+  const current = await getCurrent();
+
+  const log = new Log(`./logs/node-monitor/${current.period}_balance.md`);
   log.clear();
+
+  log.write(`${current.datetime}(${current.period})`);
 
   const node_contract_balance = await getNaxBalance(
     contract["mainnet"]["proxy"]
@@ -72,28 +111,43 @@ async function getAllBlance() {
 }
 
 // get address withdraw records from file
-function getAddrWithdrawFromFile() {
-  // get all vote address list
-  const allVoteListText = fs.readFileSync(
-    "./logs/node-monitor/votes.md",
-    "utf8"
-  );
-  const allVoteList = [];
-  allVoteListText.split(/\r?\n/).forEach((line) => {
-    if (line) {
-      allVoteList.push(line);
+async function getAddrWithdrawFromFile() {
+  const current = await getCurrent();
+
+  const file_path = `./logs/node-monitor/${current.period}_votes.md`;
+
+  try {
+    if (!fs.existsSync(file_path)) {
+      // if not exist
+      // generate current period's votes file
+      getAllVoteAddress();
     }
-  });
-  console.log("get vote address withdraw record");
-  console.log(allVoteListText);
-  // get all vote address withdraw record list
-  getAllWithdrawList(allVoteList);
+
+    // get all vote address list
+    const allVoteListText = fs.readFileSync(file_path, "utf8");
+    const allVoteList = [];
+    allVoteListText.split(/\r?\n/).forEach((line) => {
+      if (line) {
+        allVoteList.push(line);
+      }
+    });
+    console.log("get vote address withdraw record");
+    console.log(allVoteListText);
+    // get all vote address withdraw record list
+    getAllWithdrawList(allVoteList);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 // get all withdraw record list
-function getAllWithdrawList(allVoteList) {
-  const log = new Log("./logs/node-monitor/withdraw.csv");
+async function getAllWithdrawList(allVoteList) {
+  const current = await getCurrent();
+
+  const log = new Log(`./logs/node-monitor/${current.period}_withdraw.csv`);
   log.clear();
+
+  log.write(`${current.datetime}(${current.period})`);
 
   let remainList = Array.from(allVoteList);
 
@@ -161,11 +215,15 @@ function getAllWithdrawList(allVoteList) {
 }
 
 async function getAllVoteAddress() {
+  const current = await getCurrent();
+
   // init log
-  let log = new Log("./logs/node-monitor/nodes.md");
+  let log = new Log(`./logs/node-monitor/${current.period}_nodes.md`);
 
   // clear all log
   log.clear();
+
+  log.write(`${current.datetime}(${current.period})`);
 
   // get all nodes
   let nodeList = await getNodeList();
@@ -188,7 +246,7 @@ async function getAllVoteAddress() {
       // log.log(`remain list: [${remainList.map((e) => e.id).join(",")}]`);
 
       let fetch_record_progress =
-        ((allVoteList.length - remainList.length) / nodeList.length) * 100;
+        ((nodeList.length - remainList.length) / nodeList.length) * 100;
       log.log(`remain progress: ${fetch_record_progress.toFixed(2)}%`);
 
       return {
@@ -248,11 +306,17 @@ async function getAllVoteAddress() {
       } // end of results loop
 
       // start get all vote address vote detail
-      const log_votes = new Log("./logs/node-monitor/votes.md");
+      const log_votes = new Log(
+        `./logs/node-monitor/${current.period}_votes.md`
+      );
       log_votes.clear();
 
-      const log_votes_detail = new Log("./logs/node-monitor/votes-detail.md");
+      const log_votes_detail = new Log(
+        `./logs/node-monitor/${current.period}_votes-detail.md`
+      );
       log_votes_detail.clear();
+
+      log.write(`${current.datetime}(${current.period})`);
 
       log_votes_detail.line("=");
       log_votes_detail.write("allVoteList");

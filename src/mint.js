@@ -1,8 +1,8 @@
-import { call } from "./lib/nebCall";
+import { call } from "../lib/nebCall";
 import _ from "lodash";
 
-const { Log } = require("./lib/log");
-const { convert2nax, period2Time } = require("./lib/nebUtil");
+const { Log } = require("../lib/log");
+const { convert2nax, period2Time } = require("../lib/nebUtil");
 
 const dayPeriodDuration = 27;
 

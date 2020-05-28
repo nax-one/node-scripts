@@ -1,4 +1,4 @@
-export const contract = {
+const contract = {
   mainnet: {
     data: "n1qsaL3gELt121xgr3S4BAZMrqLTYoVLLzE",
     proxy: "n214bLrE3nREcpRewHXF7qRDWCcaxRSiUdw",
@@ -8,3 +8,5 @@ export const contract = {
     naxone_distribute: "n1vNBd93kAjBx41J9hBbvd9b9NqveCTPuov",
   },
 };
+
+module.exports = { contract };

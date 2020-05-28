@@ -4,15 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "monitor": "babel-node monitor.js",
-    "mint": "babel-node mint.js",
-    "naxone": "babel-node naxone.js"
+    "build": "babel src -d script",
+    "build-monitor": "babel src/monitor.js --out-file script/monitor.js",
+    "build-mint": "babel src/mint.js --out-file script/mint.js",
+    "build-naxone": "babel src/naxone.js --out-file script/naxone.js",
+    "monitor": "npm run build-monitor && node script/monitor.js",
+    "mint": "npm run build-mint &&node script/mint.js",
+    "naxone": "npm run build-naxone &&node script/naxone.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "async": "^3.2.0",
     "colors": "^1.4.0",
+    "commander": "^5.1.0",
     "lodash": "^4.17.15",
     "moment": "^2.25.3",
     "nebulas": "^0.5.6",
