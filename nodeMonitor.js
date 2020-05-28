@@ -4,28 +4,19 @@ import async from "async";
 
 const fs = require("fs");
 const { Log } = require("./lib/log");
-const { convert2nax } = require("./lib/nebUtil");
+const { convert2nax, convert2NaxBasic } = require("./lib/nebUtil");
 const { datetime } = require("./lib/utils");
+import { contract } from "./config/contract";
 
 async function run() {
+  // 1. get all vote address
   // getAllVoteAddress();
 
-  const allVoteListText = fs.readFileSync(
-    "./logs/node-monitor/votes.md",
-    "utf8"
-  );
+  // 2. get address withdraw records from file
+  // getAddrWithdrawFromFile();
 
-  const allVoteList = [];
-  allVoteListText.split(/\r?\n/).forEach((line) => {
-    if (line) {
-      allVoteList.push(line);
-    }
-  });
-
-  console.log("get vote address withdraw record");
-  console.log(allVoteListText);
-
-  getAllWithdrawList(allVoteList);
+  // 3. get all nax address balance
+  getAllBlance();
 }
 
 run();
@@ -43,6 +34,60 @@ async function getNodeVoteStatistic(nodeId) {
 async function getUserNAXWithdrawList(addr) {
   const res = await call("getUserNAXWithdrawList", [addr]);
   return res;
+}
+
+// get address nax balance
+async function getNaxBalance(addr) {
+  const res = await call("balanceOf", [addr], contract["mainnet"]["nax"]);
+
+  return parseInt(res);
+}
+
+// get all nax address balance
+async function getAllBlance() {
+  const log = new Log("./logs/node-monitor/balance.md");
+  log.clear();
+
+  const node_contract_balance = await getNaxBalance(
+    contract["mainnet"]["proxy"]
+  );
+  log.write(
+    `node contract nax balance(${contract["mainnet"]["proxy"]}): ${convert2nax(
+      node_contract_balance
+    )}`
+  );
+
+  let cool_wallet_balance = await getNaxBalance(contract["mainnet"]["cool"]);
+
+  // fix cool wallet previous balance
+  cool_wallet_balance -= convert2NaxBasic(636804);
+  log.write(
+    `cool wallet nax balance(${contract["mainnet"]["cool"]}): ${convert2nax(
+      cool_wallet_balance
+    )}`
+  );
+
+  const total_nax_balance = node_contract_balance + cool_wallet_balance;
+  log.write(`total nax balance: ${convert2nax(total_nax_balance)}`);
+}
+
+// get address withdraw records from file
+function getAddrWithdrawFromFile() {
+  // get all vote address list
+  const allVoteListText = fs.readFileSync(
+    "./logs/node-monitor/votes.md",
+    "utf8"
+  );
+  const allVoteList = [];
+  allVoteListText.split(/\r?\n/).forEach((line) => {
+    if (line) {
+      allVoteList.push(line);
+    }
+  });
+  console.log("get vote address withdraw record");
+  console.log(allVoteListText);
+  // get all vote address withdraw record list
+  getAllWithdrawList(allVoteList);
 }
 
 // get all withdraw record list
@@ -108,7 +153,9 @@ function getAllWithdrawList(allVoteList) {
         }
       }
 
-      log.log(`total wait withdraw nax: ${convert2nax(totalWaitWithdrawNax)}`);
+      log.write(
+        `total wait withdraw nax: ${convert2nax(totalWaitWithdrawNax)}`
+      );
     }
   );
 }
@@ -222,8 +269,6 @@ async function getAllVoteAddress() {
         }
         log_votes_detail.line();
       }
-
-      getAllWithdrawList(allVoteList);
     } //end of callback
   );
 }
