@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "node-monitor": "babel-node nodeMonitor.js",
+    "monitor": "babel-node monitor.js",
+    "mint": "babel-node mint.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
