@@ -90,7 +90,7 @@ async function run() {
     .map((n) => {
       const totalMintNas = (n.totalMint * 1.189).toFixed(2);
       log.write(
-        `${n.rank},"${n.name}",${n.id},"${n.vote} NAX",${n.totalMint},${totalMintNas} NAS`
+        `${n.rank},"${n.name}",${n.id},"${n.vote}",${n.totalMint},${totalMintNas} NAS`
       );
     });
 }

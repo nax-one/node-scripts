@@ -2,6 +2,7 @@
 /coinbase/*
 *.txt
 *.md
+/script
 /logs/node-monitor
 /logs/mint
 /logs/naxone
