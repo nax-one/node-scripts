@@ -8,11 +8,15 @@ yarn
 
 ## Get all noes mint records
 
+after execute script, view in `logs/mint/`
+
 ```
 yarn mint
 ```
 
 ## Monitor all nodes's vote address statistic
+
+after execute script, view in `logs/monitor/`
 
 - get all vote address
 
@@ -34,6 +38,8 @@ yarn monitor -a[ction] [b|balance]
 ```
 
 ## Get Nax.one Distribute records
+
+after execute script, view in `logs/naxone/`
 
 ```
 yarn naxone
