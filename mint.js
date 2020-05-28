@@ -1,29 +1,8 @@
-const Nebulas = require("nebulas");
-
-// const {
-//   initNeb,
-//   convert2nas,
-//   convert2nax,
-//   getAccState,
-//   getNebState,
-//   callNode,
-// } = require("./lib/nebulas");
-
-// const { clear_log, log, period2Time } = require("./lib/utils");
-
-//
-
 import { call } from "./lib/nebCall";
 import _ from "lodash";
 
 const { Log } = require("./lib/log");
 const { convert2nax, period2Time } = require("./lib/nebUtil");
-// import { contract } from "./config/contract";
-
-// const Neb = Nebulas.Neb;
-// const neb = new Neb();
-
-// initNeb(neb, "mainnet");
 
 const dayPeriodDuration = 27;
 
@@ -41,8 +20,6 @@ async function run() {
   // create day period list
   const periodList = getPeriodList(startPeriod, latestPeriod);
   let remainList = Array.from(periodList);
-
-  // log.log(periodList);
 
   let nodeList = [];
 
@@ -113,7 +90,7 @@ async function run() {
     .map((n) => {
       const totalMintNas = (n.totalMint * 1.189).toFixed(2);
       log.write(
-        `${n.rank},""${n.name}",${n.id},"${n.vote} NAX",${n.totalMint},${totalMintNas} NAS`
+        `${n.rank},"${n.name}",${n.id},"${n.vote} NAX",${n.totalMint},${totalMintNas} NAS`
       );
     });
 }
