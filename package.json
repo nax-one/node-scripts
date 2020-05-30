@@ -8,9 +8,11 @@
     "build-monitor": "babel src/monitor.js --out-file script/monitor.js",
     "build-mint": "babel src/mint.js --out-file script/mint.js",
     "build-naxone": "babel src/naxone.js --out-file script/naxone.js",
+    "build-vote": "babel src/vote.js --out-file script/vote.js",
     "monitor": "npm run build-monitor && node script/monitor.js",
     "mint": "npm run build-mint &&node script/mint.js",
-    "naxone": "npm run build-naxone &&node script/naxone.js"
+    "naxone": "npm run build-naxone &&node script/naxone.js",
+    "vote": "npm run build-vote &&node script/vote.js"
   },
   "author": "",
   "license": "ISC",

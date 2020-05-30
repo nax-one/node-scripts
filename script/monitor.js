@@ -1,4 +1,3 @@
-#!/usr/bin/env babel-node --
 "use strict";
 
 var _nebCall = require("../lib/nebCall");
@@ -257,6 +256,8 @@ async function getAllVoteAddress() {
   // clear all log
   log.clear();
 
+  log.write(current.datetime + "(" + current.period + ")");
+
   // get all nodes
   var nodeList = await getNodeList();
   var remainList = Array.from(nodeList);
@@ -386,6 +387,8 @@ async function getAllVoteAddress() {
 
     var log_votes_detail = new Log("./logs/node-monitor/" + current.period + "_votes-detail.md");
     log_votes_detail.clear();
+
+    log.write(current.datetime + "(" + current.period + ")");
 
     log_votes_detail.line("=");
     log_votes_detail.write("allVoteList");

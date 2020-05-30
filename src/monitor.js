@@ -1,5 +1,3 @@
-#!/usr/bin/env babel-node --
-
 import { call } from "../lib/nebCall";
 import _ from "lodash";
 import async from "async";

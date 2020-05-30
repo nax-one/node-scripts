@@ -95,7 +95,7 @@ async function run() {
     return a.rank - b.rank;
   }).map(function (n) {
     var totalMintNas = (n.totalMint * 1.189).toFixed(2);
-    log.write(n.rank + ",\"" + n.name + "\"," + n.id + ",\"" + n.vote + " NAX\"," + n.totalMint + "," + totalMintNas + " NAS");
+    log.write(n.rank + ",\"" + n.name + "\"," + n.id + ",\"" + n.vote + "\"," + n.totalMint + "," + totalMintNas + " NAS");
   });
 }
 
