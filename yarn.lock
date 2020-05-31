@@ -1143,6 +1143,11 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
+dotenv@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.npm.taobao.org/dotenv/download/dotenv-8.2.0.tgz?cache=0&sync_timestamp=1571191376500&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fdotenv%2Fdownload%2Fdotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
+  integrity sha1-l+YZJZradQ7qPk6j4mvO6lQksWo=
+
 drbg.js@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/drbg.js/download/drbg.js-1.0.1.tgz#3e36b6c42b37043823cdbc332d58f31e2445480b"

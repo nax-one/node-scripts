@@ -6,3 +6,5 @@
 /logs/node-monitor
 /logs/mint
 /logs/naxone
+/.env
+/keystore
