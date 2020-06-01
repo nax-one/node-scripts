@@ -8,11 +8,10 @@
     "build-monitor": "babel src/monitor.js --out-file script/monitor.js",
     "build-mint": "babel src/mint.js --out-file script/mint.js",
     "build-naxone": "babel src/naxone.js --out-file script/naxone.js",
-    "build-govern": "babel src/govern.js --out-file script/govern.js",
     "monitor": "npm run build-monitor && node script/monitor.js",
     "mint": "npm run build-mint &&node script/mint.js",
     "naxone": "npm run build-naxone &&node script/naxone.js",
-    "govern": "npm run build-govern &&node script/govern.js"
+    "govern": "node src/govern.js"
   },
   "author": "",
   "license": "ISC",

@@ -25,20 +25,23 @@ const { sleep } = require("../lib/utils");
 run();
 
 async function run() {
-  // load .env
-  require("dotenv").config();
+  program
+    .command("create <node_id>")
+    .description(`get node need to vote item list`)
+    .action((node_id) => {
+      getNodeToVotes(node_id);
+    });
 
-  // getGovAllNodesData(0);
-  // getGovAllNodesData(1);
-  // getGovAllNodesData(2);
+  program
+    .command("vote <node_id>")
+    .description(`node start to vote`)
+    .action((node_id) => {
+      // load .env.[node_id]
+      require("dotenv").config({ path: `./env/.env.${node_id}` });
+      startGovernVote(node_id);
+    });
 
-  // generateCurrentGovVotes();
-
-  // startGovernVote();
-
-  // getNodeToVotes("switch");
-
-  startGovernVote("switch");
+  program.parse(process.argv);
 }
 
 async function getCurrentGovPeriod() {
@@ -117,6 +120,7 @@ async function generateCurrentGovVotes() {
   return getPeriodVoteList(currenGovPeriod);
 }
 
+// node start to vote
 async function startGovernVote(node_id) {
   const currenGovPeriod = await getCurrentGovPeriod();
 

@@ -7,4 +7,5 @@
 /logs/mint
 /logs/naxone
 /.env
-/keystore
+/keystore/*
+/env/*
