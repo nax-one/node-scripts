@@ -1,8 +1,13 @@
 import { call } from "../lib/nebCall";
 import _ from "lodash";
+import { filter } from "async";
 
 const { Log } = require("../lib/log");
-const { convert2nax, period2Time } = require("../lib/nebUtil");
+const {
+  convert2nax,
+  period2Time,
+  convert2NaxNumber,
+} = require("../lib/nebUtil");
 
 const dayPeriodDuration = 27;
 
@@ -37,7 +42,9 @@ async function run() {
   );
   log.write(`\nPowered by Nax.One`);
   log.line("=");
-  log.write(`rank,node name,node id,vote nax,mint blocks,mint nas`);
+  log.write(
+    `rank, node name, node id, vote nax, mint blocks, mint nas, reward nas/vote nax(%%)`
+  );
 
   await Promise.all(
     periodList.map(async (p) => {
@@ -59,6 +66,7 @@ async function run() {
             name: bd["node"]["info"]["name"],
             totalMint: parseInt(bd["count"]),
             vote: convert2nax(bd["node"]["voteValue"]),
+            voteNum: convert2NaxNumber(bd["node"]["voteValue"]),
             rank: parseInt(bd["node"]["currentRanking"]) + 1,
             mintHistory: [
               {
@@ -86,11 +94,16 @@ async function run() {
 
   //   console.log(nodeList);
   nodeList
+    .filter((n) => n.rank > 0)
     .sort((a, b) => a.rank - b.rank)
     .map((n) => {
-      const totalMintNas = (n.totalMint * 1.189).toFixed(2);
+      const totalMintNas = n.totalMint * 1.189;
+      const nasNaxRatio = (totalMintNas / n.voteNum) * 10000;
+
       log.write(
-        `${n.rank},"${n.name}",${n.id},"${n.vote}",${n.totalMint},${totalMintNas} NAS`
+        `${n.rank}, "${n.name}", ${n.id}, "${n.vote}", ${
+          n.totalMint
+        }, ${totalMintNas.toFixed(2)} NAS, ${nasNaxRatio.toFixed(2)}(%%)`
       );
     });
 }

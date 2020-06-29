@@ -2,10 +2,11 @@
 /coinbase/*
 *.txt
 *.md
-/script/*
+/script
 /logs/node-monitor
 /logs/mint
 /logs/naxone
 /.env
 /keystore/*
-/env/*
+/env/.env.naxone01
+/env/.env.naxone02

@@ -6,6 +6,8 @@ var _lodash = require("lodash");
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _async = require("async");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _require = require("../lib/log"),
@@ -13,7 +15,8 @@ var _require = require("../lib/log"),
 
 var _require2 = require("../lib/nebUtil"),
     convert2nax = _require2.convert2nax,
-    period2Time = _require2.period2Time;
+    period2Time = _require2.period2Time,
+    convert2NaxNumber = _require2.convert2NaxNumber;
 
 var dayPeriodDuration = 27;
 
@@ -44,7 +47,7 @@ async function run() {
   log.write("Statistic period: " + startPeriod + "(" + startTime + ") ~ " + (latestPeriod - 1) + "(" + latestTime + ")");
   log.write("\nPowered by Nax.One");
   log.line("=");
-  log.write("rank,node name,node id,vote nax,mint blocks,mint nas");
+  log.write("rank, node name, node id, vote nax, mint blocks, mint nas, reward nas/vote nax(%%)");
 
   await Promise.all(periodList.map(async function (p) {
     var blockData = await (0, _nebCall.call)("getBlockData", [p]);
@@ -68,6 +71,7 @@ async function run() {
           name: bd["node"]["info"]["name"],
           totalMint: parseInt(bd["count"]),
           vote: convert2nax(bd["node"]["voteValue"]),
+          voteNum: convert2NaxNumber(bd["node"]["voteValue"]),
           rank: parseInt(bd["node"]["currentRanking"]) + 1,
           mintHistory: [{
             period: p,
@@ -91,11 +95,15 @@ async function run() {
   })); // end: periodList.forEach
 
   //   console.log(nodeList);
-  nodeList.sort(function (a, b) {
+  nodeList.filter(function (n) {
+    return n.rank > 0;
+  }).sort(function (a, b) {
     return a.rank - b.rank;
   }).map(function (n) {
-    var totalMintNas = (n.totalMint * 1.189).toFixed(2);
-    log.write(n.rank + ",\"" + n.name + "\"," + n.id + ",\"" + n.vote + "\"," + n.totalMint + "," + totalMintNas + " NAS");
+    var totalMintNas = n.totalMint * 1.189;
+    var nasNaxRatio = totalMintNas / n.voteNum * 10000;
+
+    log.write(n.rank + ", \"" + n.name + "\", " + n.id + ", \"" + n.vote + "\", " + n.totalMint + ", " + totalMintNas.toFixed(2) + " NAS, " + nasNaxRatio.toFixed(2) + "(%%)");
   });
 }
 
